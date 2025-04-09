@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background: linear-gradient(to bottom, #a11212, #1c0505); /* Softer red sky gradient */
+            background: url('https://images.unsplash.com/photo-1508739773434-c26b3d09e206?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80') no-repeat center center fixed;
             background-size: cover;
             position: relative;
             color: #fff;
@@ -16,6 +16,7 @@
             text-align: center;
             overflow-x: hidden;
         }
+        /* Glowing Stars */
         body::before {
             content: '';
             position: absolute;
@@ -23,22 +24,21 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle, rgba(161, 18, 18, 0.1), transparent 70%); /* Subtle misty overlay */
+            background: transparent;
             pointer-events: none;
             z-index: -1;
-            opacity: 0.6; /* Softer mist effect */
         }
-        body::after {
-            content: '';
+        .star {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAJElEQVQYV2NkYGD4z8DAwMgABXAGNgGwSgwVAFGNgYgYGBgYgAAAH8A+3eBAAAAAElFTkSuQmCC') repeat; /* Subtle noise for mist texture */
-            opacity: 0.05; /* Very faint */
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #fff, 0 0 20px #ff3333;
+            animation: twinkle 2s infinite alternate;
             pointer-events: none;
-            z-index: -1;
+        }
+        @keyframes twinkle {
+            0% { opacity: 0.5; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1); }
         }
         header {
             background: rgba(75, 0, 0, 0.8);
@@ -279,8 +279,26 @@
             }
         }
 
-        // Run auto-scale on page load
-        window.onload = autoScale;
+        // Add glowing stars dynamically
+        function addStars() {
+            const numStars = 50; // Number of stars
+            for (let i = 0; i < numStars; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.width = `${Math.random() * 3 + 1}px`; // Random size 1-4px
+                star.style.height = star.style.width;
+                star.style.left = `${Math.random() * 100}%`; // Random position
+                star.style.top = `${Math.random() * 100}%`;
+                star.style.animationDelay = `${Math.random() * 2}s`; // Random twinkle timing
+                document.body.appendChild(star);
+            }
+        }
+
+        // Run auto-scale and add stars on page load
+        window.onload = function() {
+            autoScale();
+            addStars();
+        };
         // Re-run auto-scale on window resize
         window.onresize = autoScale;
     </script>
