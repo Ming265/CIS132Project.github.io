@@ -7,14 +7,25 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background: linear-gradient(to bottom, #4b0000, #1a1a1a), url('https://images.unsplash.com/photo-1519681393784-d120267933ba?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80') no-repeat center center fixed;
+            background: linear-gradient(to bottom, #8b0000, #2f0000); /* Deep red to dark red */
             background-size: cover;
-            background-blend-mode: overlay;
+            position: relative;
             color: #fff;
             margin: 0;
             padding: 0;
             text-align: center;
             overflow-x: hidden;
+        }
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(139, 0, 0, 0.3), transparent); /* Misty red overlay */
+            pointer-events: none;
+            z-index: -1;
         }
         header {
             background: rgba(75, 0, 0, 0.8);
@@ -110,9 +121,44 @@
             text-decoration: none;
             margin: 0 15px;
         }
+        /* Scaling Control Box */
+        .scale-control {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background: rgba(17, 17, 17, 0.9);
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ff3333;
+            z-index: 1000;
+        }
+        .scale-control button {
+            background: #ff3333;
+            border: none;
+            padding: 5px 10px;
+            margin: 0 5px;
+            cursor: pointer;
+            border-radius: 3px;
+            color: #fff;
+            font-size: 1em;
+        }
+        .scale-control button:hover {
+            background: #cc0000;
+        }
+        .scale-control span {
+            font-size: 0.9em;
+            margin: 0 5px;
+        }
     </style>
 </head>
 <body>
+    <!-- Scale Control Box -->
+    <div class="scale-control">
+        <button onclick="adjustScale(-0.1)">–</button>
+        <span id="scale-display">Scale: 1.0</span>
+        <button onclick="adjustScale(0.1)">+</button>
+    </div>
+
     <header>Echoes of the Shattered Veil</header>
     <div class="container">
         <div class="card" id="xingye-card">
@@ -180,6 +226,36 @@
     </footer>
 
     <script>
+        let scaleFactor = 1.0;
+
+        // Auto-detect screen resolution and set initial scale
+        function autoScale() {
+            const screenWidth = window.innerWidth;
+            const baseWidth = 1920; // Baseline resolution (1920x1080)
+            scaleFactor = screenWidth / baseWidth; // Scale based on screen width
+            if (scaleFactor < 0.5) scaleFactor = 0.5; // Minimum scale
+            if (scaleFactor > 2.0) scaleFactor = 2.0; // Maximum scale
+            applyScale();
+        }
+
+        // Apply the scale to all elements
+        function applyScale() {
+            document.body.style.transform = `scale(${scaleFactor})`;
+            document.body.style.transformOrigin = 'top left';
+            document.body.style.width = `${100 / scaleFactor}%`;
+            document.body.style.height = `${100 / scaleFactor}%`;
+            document.getElementById('scale-display').textContent = `Scale: ${scaleFactor.toFixed(1)}`;
+        }
+
+        // Adjust scale manually
+        function adjustScale(change) {
+            scaleFactor += change;
+            if (scaleFactor < 0.5) scaleFactor = 0.5;
+            if (scaleFactor > 2.0) scaleFactor = 2.0;
+            applyScale();
+        }
+
+        // Toggle content visibility
         function toggleContent(id) {
             const content = document.getElementById(id);
             if (content.style.display === "block") {
@@ -189,6 +265,11 @@
                 content.style.display = "block";
             }
         }
+
+        // Run auto-scale on page load
+        window.onload = autoScale;
+        // Re-run auto-scale on window resize
+        window.onresize = autoScale;
     </script>
 </body>
 </html>
